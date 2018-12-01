@@ -1,6 +1,6 @@
 ﻿namespace Snake_Game
 {
-    partial class Form1
+    partial class GameView
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -28,10 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // GameView
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.Cursor = System.Windows.Forms.Cursors.No;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Name = "GameView";
+            this.Text = "Snake";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.GameView_Paint);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GameView_KeyDown);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
