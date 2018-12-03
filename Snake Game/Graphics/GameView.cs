@@ -15,14 +15,17 @@ namespace Snake_Game
     public partial class GameView : Form
     {
         Game game;
-        int size = 15;
+        int size = 30;
+        double margin = 0.125;
+
 
         public GameView()
         {
             game = new Game();
-            game.LoadLevel();            
+            game.LoadLevel();
             InitializeComponent();
-            this.ClientSize = new Size(size * game.Level.ColumnCount, size * game.Level.RowCount);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserMouse | ControlStyles.OptimizedDoubleBuffer, true);
+            this.ClientSize = new Size(size * game.Level.ColumnCount, size * game.Level.RowCount + LoadMap.Height);
             game.FrameTimer.Tick += UpdateView;
         }
 
@@ -74,18 +77,25 @@ namespace Snake_Game
         private void RenderMap(CellElement[,] map, Graphics graphics)
         {
 
-
-            graphics.FillRectangle(Brushes.Black, 0, 0, size, size);
+            graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            //graphics.FillRectangle(Brushes.Black, 0, 0, size, size);
             //var x = 11 * size;            
             //graphics.FillRectangle(Brushes.Black, x, 0 * size, size, size);
             //var a = this.Width;
             //var b = a;
+            int sizeWMargin = size - (int)(size * margin * 2);
+
+
             foreach (CellElement Cell in map)
             {
+                int posXWMagrin = Cell.Coord.X * size + (int)(size * margin);
+                int posYWMagrin = Cell.Coord.Y * size + (int)(size * margin);
+
                 switch (Cell.Type)
                 {
                     case CellType.Wall:
-                        graphics.FillRectangle(Brushes.Blue, Cell.Coord.X * size, Cell.Coord.Y * size, size, size);
+                        graphics.FillRectangle(Brushes.LawnGreen, Cell.Coord.X * size, Cell.Coord.Y * size, size, size);
+                        graphics.FillEllipse(Brushes.Green, posXWMagrin, posYWMagrin, sizeWMargin, sizeWMargin);
                         break;
 
                     case CellType.Path:
@@ -98,13 +108,27 @@ namespace Snake_Game
         private void GameView_Paint(object sender, PaintEventArgs e)
         {
             Graphics graphics = e.Graphics;
-            RenderMap(game.buffer, graphics);
+            RenderMap(game.map, graphics);
             //this.Width = size * (game.Level.ColumnCount);
             //this.Height = size * (game.Level.RowCount);
         }
 
-        private void Space_Paint(object sender, PaintEventArgs e)
-        {            
+        private void LoadMap_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog file = new OpenFileDialog
+            {
+                Filter = ".stg |*.stg",
+                Multiselect = false,
+                CheckFileExists = true,
+                AddExtension = true,
+                DefaultExt = ".stg",
+                Title = "Open .stg map files"
+            };
+            file.ShowDialog();
+            //file.OpenFile();
+            game.LoadLevel(new Stage(file.FileName, false));
+      //      game.Title = file.SafeFileName;
+            game.Title = file.SafeFileName.Replace(".stg", "");
         }
     }
 }

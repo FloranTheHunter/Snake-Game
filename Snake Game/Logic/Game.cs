@@ -27,17 +27,17 @@ namespace Snake_Game.Logic
         static string defaultMap =
             "############" +
             "#..........#" +
+            ".........#.." +
+            "#......###.#" +
             "#..........#" +
             "#..........#" +
-            "#..........#" +
-            "#..........#" +
-            "#..........#" +
-            "#..........#" +
+            "..###......." +
+            "#.#........#" +
             "#..........#" +
             "############";
 
         Stage defaultLevel = new Stage(defaultMap, 5, 12, "BetaStage");
-        public Stage Level;
+        public Stage Level { get; private set; }
 
         private Timer _secondTimer;
         public int FPS;
@@ -49,7 +49,7 @@ namespace Snake_Game.Logic
         public static Command Key;
 
         /// <summary> Game map data </summary>
-        public CellElement[,] buffer;
+        public LevelMap map;
 
 
         public int Score = 0;
@@ -59,7 +59,7 @@ namespace Snake_Game.Logic
         public void LoadLevel()
         {
             Level = defaultLevel;
-            buffer = Level.ReturnBufferMap();
+            map.buffer = Level.ReturnBufferMap();
             Title = Level.StageTitle;
             //throw new NotImplementedException();
         }
@@ -67,6 +67,9 @@ namespace Snake_Game.Logic
 
         public void LoadLevel(Stage stage)
         {
+            Level = stage;
+            map.buffer = Level.ReturnBufferMap();
+            Title = Level.StageTitle;
             throw new NotImplementedException();
         }
 
@@ -76,7 +79,7 @@ namespace Snake_Game.Logic
             _secondTimer.Tick += _secondTimer_Tick;
             _secondTimer.Interval = 1000;
             FrameTimer = new Timer();
-            FrameTimer.Interval = 50;
+            FrameTimer.Interval = 5;
             FrameTimer.Tick += Update;
 
             _secondTimer.Start();

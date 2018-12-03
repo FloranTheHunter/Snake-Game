@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,12 +19,84 @@ namespace Snake_Game.Logic
         /// Set readTitle 'true' to get title text from inside of aa file
         /// </summary>
         /// <param name="readtitle"></param>
-        public Stage(bool readTitle = false)
+        public Stage(string filePath, bool readTitle = false)
         {
-            throw new NotImplementedException();
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.DefaultExt = ".txt";
-            fileDialog.Filter = ".txt";
+            //throw new NotImplementedException();
+            try
+            {
+                //Read Data block
+                using (StreamReader r = new StreamReader(filePath))
+                {
+                    int flag = 0;
+                    while (!r.EndOfStream)
+                    {
+
+                        string line = r.ReadLine().ToUpper();
+                        switch (line)
+                        {
+                            case "//DATA":
+                                flag = 1;
+                                break;
+
+                            case "//MAP":
+                                flag = 2;
+                                break;
+
+                            case "//RECORDS":
+                                flag = 3;
+                                break;
+
+                            default:
+                                if (!string.IsNullOrEmpty(line))
+                                    if (line[0] == '~')
+                                        if (line.ToUpper().Contains("~TITLE"))
+                                        {
+                                            line = line.ToUpper().Replace("~TITLE", "");
+                                        }
+                                        else
+                                            if (line.ToUpper().Contains("~DUP"))
+                                        {
+
+                                        }
+                                        else
+                                            if (line.ToUpper().Contains("~DLEFT"))
+                                        {
+
+                                        }
+                                        else
+                                            if (line.ToUpper().Contains("~DDOWN"))
+                                        {
+
+                                        }
+                                        else
+                                            if (line.ToUpper().Contains("~DRIGHT"))
+                                        {
+
+                                        }
+                                        else
+                                            if (line.ToUpper().Contains("~L"))
+                                        {
+                                            line = line.ToUpper().Replace("~L", "");
+                                        }
+                                        else
+                                            if (line.ToUpper().Contains("~C"))
+                                        {
+                                            ColumnCount = int.Parse(line.ToUpper().Replace("~C", ""));
+                                        }
+                                        else
+                                            if (line.ToUpper().Contains("~R"))
+                                        {
+                                           RowCount  = int.Parse(line.ToUpper().Replace("~R", ""));
+                                        }
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
 
         }
 
@@ -38,6 +112,7 @@ namespace Snake_Game.Logic
             MaxAppleCount = maxAppleCount;
             StageTitle = title;
         }
+
         /// <summary>
         /// Create stage from local string
         /// </summary>
@@ -46,7 +121,6 @@ namespace Snake_Game.Logic
         /// <param name="ColumnCount"></param>
         /// <param name="title"></param>
         /// 
-
         public Stage(string stageMap, int maxAppleCount, int ColumnCount, string title = "default")
         {
             int rowCount = stageMap.Length / ColumnCount;
@@ -116,7 +190,10 @@ namespace Snake_Game.Logic
         public int ColumnCount { get; private set; }
         #endregion
 
+
+
         public string StageTitle = "default";
+        Snake snake;
         public int MaxAppleCount { get; private set; }
 
 
